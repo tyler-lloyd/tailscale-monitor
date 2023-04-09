@@ -1,4 +1,4 @@
-package tswatcher
+package tsmon
 
 import (
 	"time"

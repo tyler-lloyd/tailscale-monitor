@@ -1,4 +1,4 @@
-module tswatcher
+module tsmon
 
 go 1.19
 

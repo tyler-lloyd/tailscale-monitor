@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"os"
-	"tswatcher"
+	"tsmon"
 
 	"github.com/twilio/twilio-go"
 	"golang.org/x/exp/slog"
@@ -52,7 +52,7 @@ func NewTwilioService(configFile string) *TwilioService {
 	}
 }
 
-func (t *TwilioService) Send(ctx context.Context, notification tswatcher.Notification) {
+func (t *TwilioService) Send(ctx context.Context, notification tsmon.Notification) {
 	t.logger.InfoCtx(ctx, "sending notification", "message", notification.Device.Name)
 	messageParams, err := t.ruleEngine.CreateMessage(notification.Device.ID)
 	if err != nil {
