@@ -2,6 +2,7 @@ package tsmon
 
 import (
 	"context"
+	"time"
 
 	"golang.org/x/exp/slog"
 )
@@ -14,6 +15,7 @@ type Notifier struct {
 	logger              *slog.Logger
 	notificationQueue   <-chan Notification
 	notificationService NotificationService
+	lastNotification    time.Time
 }
 
 type NotifierOption func(n *Notifier)
@@ -49,4 +51,9 @@ func (n *Notifier) Start() {
 
 func (n *Notifier) HandleNotification(notification Notification) {
 	n.logger.Info("event received!", "time", notification.Timestamp)
+	if time.Since(n.lastNotification) > time.Hour {
+		n.logger.Info("sending notification to service")
+		n.lastNotification = notification.Timestamp
+		n.notificationService.Send(context.TODO(), notification)
+	}
 }

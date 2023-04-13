@@ -60,12 +60,14 @@ func (t *TwilioService) Send(ctx context.Context, notification tsmon.Notificatio
 		return
 	}
 
-	resp, err := t.client.Api.CreateMessage(messageParams)
-	if err != nil {
-		t.logger.ErrorCtx(ctx, "failed to create message", "error", err)
-		return
-	}
+	for _, msg := range messageParams {
+		resp, err := t.client.Api.CreateMessage(&msg)
+		if err != nil {
+			t.logger.ErrorCtx(ctx, "failed to create message", "error", err)
+			return
+		}
 
-	response, _ := json.Marshal(resp)
-	t.logger.InfoCtx(ctx, "message sent", "response", string(response))
+		response, _ := json.Marshal(resp)
+		t.logger.InfoCtx(ctx, "message sent", "response", string(response))
+	}
 }
