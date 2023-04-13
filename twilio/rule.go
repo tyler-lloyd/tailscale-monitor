@@ -26,14 +26,18 @@ func NewRuleEngine(r []Rule) *RuleEngine {
 	}
 }
 
-func (r *RuleEngine) CreateMessage(id string) (*twilioApi.CreateMessageParams, error) {
+func (r *RuleEngine) CreateMessage(id string) ([]twilioApi.CreateMessageParams, error) {
 	for _, r := range r.Rules {
 		if strings.EqualFold(r.ID, id) {
-			params := &twilioApi.CreateMessageParams{}
-			params.SetFrom(r.FromNumber)
-			params.SetBody(r.DefaultMessage)
-			params.SetTo(strings.Join(r.NumbersToText, ","))
-			return params, nil
+			messagesParams := make([]twilioApi.CreateMessageParams, 0)
+			for _, num := range r.NumbersToText {
+				params := twilioApi.CreateMessageParams{}
+				params.SetFrom(r.FromNumber)
+				params.SetBody(r.DefaultMessage)
+				params.SetTo(num)
+				messagesParams = append(messagesParams, params)
+			}
+			return messagesParams, nil
 		}
 	}
 	return nil, ErrRuleNotFound
