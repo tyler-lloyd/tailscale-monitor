@@ -81,15 +81,10 @@ func (t *TailscaleWatchProcess) Poll(ctx context.Context) {
 			t.logger.WarnCtx(ctx, "device not found", "device", id)
 			continue
 		}
-		if !d.Online {
-			t.logger.InfoCtx(ctx, "offline. notifying.", "device", d.Name, "lastSeen", d.LastSeen)
-			go t.notifyOffline(d)
-			continue
-		}
-		t.logger.InfoCtx(ctx, "online", "device", d.Name)
+		go t.notify(d)
 	}
 }
 
-func (t *TailscaleWatchProcess) notifyOffline(dev *TailnetDevice) {
+func (t *TailscaleWatchProcess) notify(dev *TailnetDevice) {
 	t.notifyChan <- Notification{dev, time.Now()}
 }
